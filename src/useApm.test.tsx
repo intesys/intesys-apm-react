@@ -47,6 +47,7 @@ describe("useApm", () => {
     });
 
     it("apm is a singleton", () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const spy = jest.spyOn(require("@elastic/apm-rum"), "init");
       bootstrapApm("test", "test", "test", "test");
       bootstrapApm("test", "test", "test", "test");
@@ -56,6 +57,7 @@ describe("useApm", () => {
 
   describe("transaction", () => {
     const ComponentWithApmAndEffect: React.FC = () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, sendTransaction] = useApmTransaction("test transaction");
 
       useEffect(() => {
@@ -107,7 +109,7 @@ describe("useApm", () => {
         useEffect(() => {
           registerSpan("span1");
           registerSpan("span2");
-        }, []);
+        }, [registerSpan]);
         return <>SUT component</>;
       };
 
@@ -122,7 +124,7 @@ describe("useApm", () => {
         useEffect(() => {
           registerSpan("span1");
           registerSpan("span2");
-        }, []);
+        }, [registerSpan]);
         return <>SUT component</>;
       };
 

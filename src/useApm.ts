@@ -16,7 +16,7 @@ export const bootstrapApm = (
   serviceName: string,
   serviceVersion: string,
   environment: string
-) => {
+): ApmBase => {
   if (typeof apm === "undefined") {
     apm = init({
       // Set required service name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
@@ -56,6 +56,7 @@ export const useApmTransaction = (
       span && spanRegistry.push(span);
       return span;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [transaction]
   );
 
@@ -68,6 +69,7 @@ export const useApmTransaction = (
     spanRegistry.forEach((span) => span.end());
 
     transaction?.end();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transaction]);
 
   useEffect(() => {
