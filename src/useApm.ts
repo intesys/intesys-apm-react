@@ -43,6 +43,8 @@ export const useApmTransaction = (
     return apm.startTransaction(name);
   }, [name]);
 
+  const spanRegistry: Span[] = [];
+
   const registerSpan = useCallback(
     (name: string) => {
       if (typeof transaction === "undefined") {
@@ -50,8 +52,9 @@ export const useApmTransaction = (
         return;
       }
 
-      const span = transaction?.startSpan(name);
-      span?.end();
+      const span = transaction.startSpan(name);
+      span && spanRegistry.push(span);
+      return span;
     },
     [transaction]
   );
@@ -61,6 +64,8 @@ export const useApmTransaction = (
       console.warn("Transaction doesn't exist, cannot send it");
       return;
     }
+
+    spanRegistry.forEach((span) => span.end());
 
     transaction?.end();
   }, [transaction]);

@@ -3,12 +3,17 @@ import React, { useEffect } from "react";
 import { apm, bootstrapApm, useApmTransaction } from "./useApm";
 
 const transactionEndSpy = jest.fn();
+const spanEndSpy = jest.fn();
+const spanSpy = jest.fn(() => ({
+  end: spanEndSpy,
+}));
 
 jest.mock("@elastic/apm-rum", () => ({
   __esModule: true,
   init: jest.fn(() => ({
     startTransaction: jest.fn(() => ({
       end: transactionEndSpy,
+      startSpan: spanSpy,
     })),
   })),
 }));
@@ -83,6 +88,49 @@ describe("useApm", () => {
     it("transaction is sent if component does it explicitly", () => {
       render(<ComponentWithApmAndEffect />);
       expect(transactionEndSpy).toBeCalled();
+    });
+  });
+
+  describe("span", () => {
+    beforeAll(() => {
+      bootstrapApm("test", "test", "test", "test");
+    });
+
+    beforeEach(() => {
+      transactionEndSpy.mockClear();
+      spanSpy.mockClear();
+      spanEndSpy.mockClear();
+    });
+
+    it("register multiple spans", () => {
+      const SutComponent: React.FC = () => {
+        const [registerSpan] = useApmTransaction("test transaction");
+
+        useEffect(() => {
+          registerSpan("span1");
+          registerSpan("span2");
+        }, []);
+        return <>SUT component</>;
+      };
+
+      render(<SutComponent />);
+      expect(spanSpy).toBeCalledTimes(2);
+    });
+
+    it("unmounting component, spans are flushed", () => {
+      const SutComponent: React.FC = () => {
+        const [registerSpan] = useApmTransaction("test transaction");
+
+        useEffect(() => {
+          registerSpan("span1");
+          registerSpan("span2");
+        }, []);
+        return <>SUT component</>;
+      };
+
+      const { unmount } = render(<SutComponent />);
+      unmount();
+      expect(spanEndSpy).toBeCalledTimes(2);
     });
   });
 });
