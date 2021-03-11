@@ -20,7 +20,7 @@ jest.mock("@elastic/apm-rum", () => ({
 
 describe("useApm", () => {
   const ComponentWithApm: React.FC = () => {
-    const [_, __] = useApmTransaction("test transaction");
+    useApmTransaction("test transaction");
     return <>SUT component</>;
   };
 
@@ -56,13 +56,11 @@ describe("useApm", () => {
 
   describe("transaction", () => {
     const ComponentWithApmAndEffect: React.FC = () => {
-      const [registerSpan, sendTransaction] = useApmTransaction(
-        "test transaction"
-      );
+      const [_, sendTransaction] = useApmTransaction("test transaction");
 
       useEffect(() => {
         sendTransaction();
-      }, []);
+      }, [sendTransaction]);
       return <>SUT component</>;
     };
 

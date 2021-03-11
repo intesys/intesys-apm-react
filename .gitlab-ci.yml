@@ -1,0 +1,68 @@
+image: node:12.16.1
+
+stages:
+  - analyze
+  - build
+  - test
+  - deploy
+
+# Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
+before_script:
+  - npm ci --cache .npm --prefer-offline
+
+build:
+  stage: build
+  script:
+    - npm run build
+
+test-unit:
+  stage: test
+  script:
+    - npm test -- --ci --bail
+
+eslint:
+  stage: analyze
+  script:
+    - npm run lint
+#
+# sonarqube:
+#   stage: analyze
+#   script:
+#     - npm run sonar -Dsonar.login=$SONAR_TOKEN
+#   only:
+#     - main
+#     - tags
+#
+# publish:
+#   stage: deploy
+#   variables:
+#     GIT_STRATEGY: clone
+#   script:
+#     - apt-get --assume-yes install git openssh-client
+#     #- git remote set-url origin https://ansible-user:$CI_PUSH_TOKEN@gitlab.intesys.it/tech/arag_multioption.git
+#     #- ssh-add < $(echo "$AU_PRV_KEY")
+#     - eval $(ssh-agent -s)
+#     - echo "$BITBUCKET_PRV_KEY" | tr -d '\r' | ssh-add - > /dev/null
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#     - git clean -fd
+#     # create a new branch without history
+#     - git checkout --orphan exported origin/main
+#     # setup bitbucket remote
+#     - git remote add bitbucket git@bitbucket.org:plzhomeprj/portal-app.git
+#     # setup user
+#     - git config --global user.email "noreply@example.com"
+#     - git config --global user.name "Intesys CI"
+#     # commit file in new branch
+#     - git commit -m "CI_COMMIT_REF_NAME $CI_COMMIT_REF_NAME"
+#     # push to bitbucket
+#     - git push bitbucket exported:master --force
+#   only:
+#     - main
