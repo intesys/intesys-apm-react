@@ -1,9 +1,14 @@
 {
   "name": "intesys-apm-react",
   "version": "1.0.0",
-  "description": "Utility functions to log to elastic APM, using elastic\u001b[1;5D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C/apm-rum",
-  "main": "index.js",
+  "description": "Utility functions to log to elastic APM, using elastic/apm-rum",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc src/index.ts -d --outDir dist --sourceMap",
     "test": "jest"
   },
   "author": "",
