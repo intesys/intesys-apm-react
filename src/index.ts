@@ -1,3 +1,1 @@
-import { apm, bootstrapApm, useApmTransaction } from "./useApm";
-
-export { apm, bootstrapApm, useApmTransaction };
+export * from "./useApm";
