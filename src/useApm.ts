@@ -15,7 +15,8 @@ export const bootstrapApm = (
   serverUrl: string,
   serviceName: string,
   serviceVersion: string,
-  environment: string
+  environment: string,
+  active = true
 ): ApmBase => {
   if (typeof apm === "undefined") {
     apm = init({
@@ -26,7 +27,7 @@ export const bootstrapApm = (
       // Set service version (required for sourcemap feature)
       serviceVersion,
       environment,
-      active: true,
+      active,
       instrument: true,
     });
   }
