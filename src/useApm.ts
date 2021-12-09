@@ -1,4 +1,4 @@
-import { ApmBase, init } from "@elastic/apm-rum";
+import { ApmBase, init, Span } from "@elastic/apm-rum";
 import { useCallback, useEffect, useMemo } from "react";
 
 export let apm: ApmBase;
